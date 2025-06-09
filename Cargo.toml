@@ -1,0 +1,20 @@
+[package]
+name = "slint_android_app"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+slint = { version = "1.6", features = ["backend-android-activity-06"] }
+ndk = "0.7"
+ndk-glue = "0.7"
+jni = "0.21" # acesso ao GPS via Java
+log = "0.4"
+android_logger = "0.13"
+android-activity = { version = "0.5", features = [ "native-activity" ] }
+
+
+[build-dependencies]
+slint-build = "1.6"

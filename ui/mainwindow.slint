@@ -1,0 +1,74 @@
+import { VerticalBox } from "std-widgets.slint";
+
+export global CalcLogic {
+    callback button_pressed(string);
+}
+
+component Button {
+    in property <string> text;
+    min-height: 30px;
+    min-width: 30px;
+    in property <brush> background: @linear-gradient(-20deg, #a0a3e4, #3c58e3);
+
+    Rectangle {
+        background: ta.pressed ? red :
+                    ta.has-hover ? background.darker(20%) : background;
+        animate background { duration: 100ms; }
+        border-radius: 4px;
+        border-width: 2px;
+        border-color: background.darker(20%);
+
+        ta := TouchArea {
+            clicked => {
+                CalcLogic.button_pressed(root.text);
+            }
+        }
+    }
+
+    Text {
+        text: root.text;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+export component MainWindow inherits Window {
+    in property <int> value: 0;
+
+    GridLayout {
+        padding: 10px;
+        spacing: 5px;
+
+        Text {
+            text: value;
+            colspan: 4;
+            horizontal-alignment: center;
+            font-size: 20px;
+        }
+
+        Row {
+            Button { text: "1"; }
+            Button { text: "2"; }
+            Button { text: "3"; }
+            Button { text: "+"; background: yellow; }
+        }
+        Row {
+            Button { text: "4"; }
+            Button { text: "5"; }
+            Button { text: "6"; }
+            Button { text: "-"; background: yellow; }
+        }
+        Row {
+            Button { text: "7"; }
+            Button { text: "8"; }
+            Button { text: "9"; }
+            Button { text: "*"; background: yellow; }
+        }
+        Row {
+            Button { text: "0"; }
+            Button { text: "="; background: green; }
+            Button { text: "/"; background: yellow; }
+            Rectangle {} // espaço vazio para completar 4 colunas
+        }
+    }
+}

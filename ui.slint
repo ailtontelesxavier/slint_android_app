@@ -1,0 +1,25 @@
+
+
+export component MainWindow inherits Window {
+    callback iniciar();
+    in property<string> coordenadas;
+
+    VerticalLayout {
+        spacing: 16px;
+
+        Text {
+            text: "Coordenadas:";
+            font-size: 20px;
+        }
+
+        Text {
+            text: root.coordenadas;
+            wrap: word;
+        }
+
+        Button {
+            text: "Iniciar Rota";
+            clicked => root.iniciar();
+        }
+    }
+}
