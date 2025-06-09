@@ -72,3 +72,25 @@ fn android_main(app: AndroidApp) {
     window.run().unwrap();
 }
 
+use jni::JNIEnv;
+use jni::objects::{JObject, JValue};
+use jni::sys::jdoubleArray;
+
+/// Função JNI chamada de uma thread no Rust
+fn get_coords(env: &JNIEnv, activity: &JObject) -> Option<(f64, f64)> {
+    let array_obj = env
+        .call_method(*activity, "getLocation", "()[D", &[])
+        .ok()?
+        .l()
+        .ok()?;
+
+    let array: jdoubleArray = array_obj.into_inner();
+    let elements = env.get_double_array_elements(array).ok()?;
+    let slice = elements.as_ptr();
+
+    unsafe {
+        let lat = *slice;
+        let lon = *slice.add(1);
+        Some((lat, lon))
+    }
+}

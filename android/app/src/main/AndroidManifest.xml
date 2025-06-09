@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.example.slint_android_app">
 
+    <!-- Permissão para acessar localização precisa (GPS) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application android:label="SlintApp" android:hasCode="true">
         <activity android:name="org.slint.android.SlintActivity"
             android:label="SlintApp"
@@ -14,5 +17,3 @@
         </activity>
     </application>
 </manifest>
-<!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
--->

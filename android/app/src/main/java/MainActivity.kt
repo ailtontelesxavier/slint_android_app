@@ -1,50 +1,45 @@
-package com.seuprojeto
+package com.example.slintandroidapp
 
-import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
-import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.*
 
 class MainActivity : Activity() {
-
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-
-    companion object {
-        init {
-            System.loadLibrary("caminho_gps") // nome da lib Rust compilada
-        }
-
-        external fun startRust()
-    }
+    private var lastLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        startRust()
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+
+        try {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                1000L,
+                1f,
+                object : LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        lastLocation = location
+                    }
+
+                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+                    override fun onProviderEnabled(provider: String) {}
+                    override fun onProviderDisabled(provider: String) {}
+                }
+            )
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
     }
 
-    // Função chamada por Rust via JNI
+    @Suppress("unused") // chamada por JNI
     fun getLocation(): DoubleArray {
-        var coords = doubleArrayOf(0.0, 0.0)
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-            // Solicita permissão se necessário
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        return if (lastLocation != null) {
+            doubleArrayOf(lastLocation!!.latitude, lastLocation!!.longitude)
         } else {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    location?.let {
-                        coords = doubleArrayOf(it.latitude, it.longitude)
-                    }
-                }
+            doubleArrayOf(0.0, 0.0)
         }
-        return coords
     }
 }
